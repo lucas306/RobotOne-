@@ -11,23 +11,23 @@ import java.util.List;
 import org.jsoup.Jsoup;  
 import org.jsoup.nodes.Document;  
 import org.jsoup.nodes.Element;  
-import org.jsoup.select.Evaluator;
 
 public class log {
-    public static class envioEmail {
+    
+   /* public static class envioEmail {
 
-        String emailPadrao = "le34661@gmail.com";
-        String senhaPadrao = "lucas@60";
+        String emailPadrao = "luka.pete13@gmail.com";
+        String senhaPadrao = "luka_PT13";
         public envioEmail(){
-
-            SimpleEmail email = new SimpleEmail();
+            
             try{
-                
+                	
+                SimpleEmail email = new SimpleEmail();
                 email.setDebug(true);
-                email.setHostName("smtp.gmail.com");
-                email.setSmtpPort(587);
-                email.setAuthenticator(new DefaultAuthenticator(emailPadrao, senhaPadrao ));
+                email.setHostName("smtp.gmail.com"); 
+                email.setSmtpPort(465);
                 email.setSSLOnConnect(true);
+                email.setAuthenticator(new DefaultAuthenticator(emailPadrao, senhaPadrao ));
                 email.setFrom(emailPadrao);
                 email.setSubject("Teste de funcionamento");
                 email.setMsg("Testando o codigo do email");
@@ -35,11 +35,12 @@ public class log {
                 email.send();
             }catch(EmailException e){
 
-                System.out.println("ERRO "+ e.getMessage());
+                System.out.println("ERRO: "+ e.getMessage());
             }
         }
 
-    }
+    }*/
+    
     public static class TransfJson {
 
         private String namePolicy;
@@ -76,19 +77,25 @@ public class log {
             );
             tagList.add(transfJson);
         }
-        
         for(TransfJson transfJson: tagList){
 
             converterToJson(transfJson);            
         }
-        envioEmail novoEmail = new envioEmail();
+        //envioEmail novoEmail = new envioEmail();
+        //System.out.print(lista);
     }
-    private static void converterToJson(TransfJson transfJson){
+    
+    public static void converterToJson(TransfJson transfJson){
         ObjectMapper mapper = new ObjectMapper();
         try{
             String json = mapper.writeValueAsString(transfJson);
             if(json.contains("deprecated")){
-                System.out.println("Objeto em JSON: "+json);
+
+               List<String> lista = new ArrayList<String>();
+               lista.add(json);
+               //System.out.println("Objeto em JSON: "+json);
+               //System.out.println("------------------------------------------------------------------"); 
+               System.out.print(lista);
             }
         }catch(JsonProcessingException e){
             e.printStackTrace();
