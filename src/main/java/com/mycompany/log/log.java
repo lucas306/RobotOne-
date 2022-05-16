@@ -14,7 +14,32 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Evaluator;
 
 public class log {
-    
+    public static class envioEmail {
+
+        String emailPadrao = "le34661@gmail.com";
+        String senhaPadrao = "lucas@60";
+        public envioEmail(){
+
+            SimpleEmail email = new SimpleEmail();
+            try{
+                
+                email.setDebug(true);
+                email.setHostName("smtp.gmail.com");
+                email.setSmtpPort(587);
+                email.setAuthenticator(new DefaultAuthenticator(emailPadrao, senhaPadrao ));
+                email.setSSLOnConnect(true);
+                email.setFrom(emailPadrao);
+                email.setSubject("Teste de funcionamento");
+                email.setMsg("Testando o codigo do email");
+                email.addTo("lucasjarandia.1428@aluno.saojudas.br");
+                email.send();
+            }catch(EmailException e){
+
+                System.out.println("ERRO "+ e.getMessage());
+            }
+        }
+
+    }
     public static class TransfJson {
 
         private String namePolicy;
@@ -68,32 +93,5 @@ public class log {
         }catch(JsonProcessingException e){
             e.printStackTrace();
         } 
-    }
-    public class envioEmail {
-
-        String emailPadrao = "le34661@gmail.com";
-        String senhaPadrao = "lucas@60";
-        public envioEmail(){
-
-            SimpleEmail email = new SimpleEmail();
-
-            email.setDebug(true);
-            email.setHostName("smtp.gmail.com");
-            email.setSmtpPort(465);
-            email.setAuthenticator(new DefaultAuthenticator(emailPadrao, senhaPadrao ));
-            email.setSSLOnConnect(true);
-            try{
-
-                email.setFrom(emailPadrao);
-                email.setSubject("Teste de funcionamento");
-                email.setMsg("Testando o codigo do email");
-                email.addTo("lucasjarandia.1428@aluno.saojudas.br");
-                email.send();
-            }catch(EmailException e){
-
-                System.out.println("ERRO "+ e.getMessage());
-            }
-        }
-
     }
 }
