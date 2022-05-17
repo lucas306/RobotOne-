@@ -1,11 +1,14 @@
 package com.mycompany.log;
 
+import java.util.GregorianCalendar;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.SimpleEmail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;  
@@ -14,7 +17,20 @@ import org.jsoup.nodes.Element;
 
 public class log {
     
-   /* public static class envioEmail {
+    public static class verificador{
+        
+        
+        public verificador(){
+            
+            GregorianCalendar dataHoje = new GregorianCalendar();
+            int ano = dataHoje.get(GregorianCalendar.YEAR);
+            int mes = dataHoje.get(GregorianCalendar.MONTH);
+            int dia = dataHoje.get(GregorianCalendar.DAY_OF_MONTH);
+            System.out.println(ano + mes + dia);
+        }
+    }
+    
+    public static class envioEmail {
 
         String emailPadrao = "luka.pete13@gmail.com";
         String senhaPadrao = "luka_PT13";
@@ -38,14 +54,12 @@ public class log {
                 System.out.println("ERRO: "+ e.getMessage());
             }
         }
-
-    }*/
+    }
     
     public static class TransfJson {
 
         private String namePolicy;
         private String textPolicy;
-        
         public TransfJson(String namePolicy, String textPolicy){
            
             this.namePolicy = namePolicy;
@@ -60,7 +74,7 @@ public class log {
     }
     
     public static void main(String[] args) throws IOException {
-      
+        
         String URL = "https://developers.google.com/android/management/reference/rest/v1/enterprises.policies";
         Document doc = Jsoup.connect(URL).get();
         Element table = doc.getElementById("Policy.FIELDS-table");
@@ -82,22 +96,23 @@ public class log {
             converterToJson(transfJson);            
         }
         //envioEmail novoEmail = new envioEmail();
-        //System.out.print(lista);
+        verificador verificando = new verificador();
     }
-    
+
     public static void converterToJson(TransfJson transfJson){
+        
+        List<String> lista = new ArrayList<String>();
         ObjectMapper mapper = new ObjectMapper();
         try{
             String json = mapper.writeValueAsString(transfJson);
             if(json.contains("deprecated")){
-
-               List<String> lista = new ArrayList<String>();
+                
                lista.add(json);
                //System.out.println("Objeto em JSON: "+json);
-               //System.out.println("------------------------------------------------------------------"); 
-               System.out.print(lista);
+               //System.out.println("-----------------------------------");
             }
         }catch(JsonProcessingException e){
+            
             e.printStackTrace();
         } 
     }
