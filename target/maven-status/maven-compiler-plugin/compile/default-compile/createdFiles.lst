@@ -1,2 +1,4 @@
-com\mycompany\log\log$TransfJson.class
+com\mycompany\log\log$envioEmail.class
 com\mycompany\log\log.class
+com\mycompany\log\log$verificador.class
+com\mycompany\log\log$TransfJson.class
