@@ -1,76 +1,118 @@
 package com.mycompany.log;
 
-import java.util.GregorianCalendar;
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.SimpleEmail;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;  
 import org.jsoup.nodes.Document;  
-import org.jsoup.nodes.Element;  
+import org.jsoup.nodes.Element;
+import java.io.IOException;
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.mail.PasswordAuthentication;
 
+/**
+ * 
+ * @author lucas.jarandia
+ * @version 1.0
+ */
 public class log {
+        
+    public static void envioDeEmail(List lista) {
     
-    public static class verificador{
+        String emailEnvioPrimario = "le34661@gmail.com";
+        String senhaEnvioPrimario = "tuygvkhdvfbjzzwd";
+        String emailDestinatarioPrimario = "lucasjarandia.1428@aluno.saojudas.br";
+
+        String emailEnvioSecundario = "le34661@gmail.com";
+        String senhaEnvioSecundario = "tuygvkhdvfbjzzwd";
+        String emailDestinatarioSecundario = "lucasjarandia.1428@aluno.saojudas.br";
+        boolean confirmaEnvio = false;
         
         
-        public verificador(){
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.socketFactory.port", "465");
+        props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", "465");
+        
+        
             
-            GregorianCalendar dataHoje = new GregorianCalendar();
-            int ano = dataHoje.get(GregorianCalendar.YEAR);
-            int mes = dataHoje.get(GregorianCalendar.MONTH);
-            int dia = dataHoje.get(GregorianCalendar.DAY_OF_MONTH);
-            System.out.println(ano + mes + dia);
-        }
-    }
-    
-    public static class envioEmail {
+        Session sessionPri = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
 
-        String emailPadrao = "luka.pete13@gmail.com";
-        String senhaPadrao = "luka_PT13";
-        public envioEmail(){
-            
-            try{
-                	
-                SimpleEmail email = new SimpleEmail();
-                email.setDebug(true);
-                email.setHostName("smtp.gmail.com"); 
-                email.setSmtpPort(465);
-                email.setSSLOnConnect(true);
-                email.setAuthenticator(new DefaultAuthenticator(emailPadrao, senhaPadrao ));
-                email.setFrom(emailPadrao);
-                email.setSubject("Teste de funcionamento");
-                email.setMsg("Testando o codigo do email");
-                email.addTo("lucasjarandia.1428@aluno.saojudas.br");
-                email.send();
-            }catch(EmailException e){
-
-                System.out.println("ERRO: "+ e.getMessage());
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication()
+            {
+                return new PasswordAuthentication(emailEnvioPrimario,
+                senhaEnvioPrimario);
             }
+        });
+        sessionPri.setDebug(true);
+        String msgBody = ""+lista.toString().replace("[","").replace("]", "").replace(",", "").replace("{", "").replace("}", "");
+
+        try {
+
+            Message msg = new MimeMessage(sessionPri);
+            msg.setFrom(new InternetAddress(emailEnvioPrimario));
+            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(emailDestinatarioPrimario));
+            msg.setSubject("POLITICAS DO GOOGLE ANDROID MANAGEMENT API");
+            msg.setContent(msgBody, "html");
+            msg.setText(msgBody);
+            Transport.send(msg);
+            confirmaEnvio = true;
+
+        }catch(AddressException e) { System.out.println(e.toString());
+        }catch(MessagingException e) { System.out.println(e.toString());}
+        
+        if(confirmaEnvio == false){
+            
+            Session sessionSec = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication()
+                {
+                    return new PasswordAuthentication(emailEnvioSecundario,
+                    senhaEnvioSecundario);
+                }
+            });
+            sessionSec.setDebug(true);
+            String msgBodySenc = lista.toString();
+
+            try {
+
+                Message msg = new MimeMessage(sessionSec);
+                msg.setFrom(new InternetAddress(emailEnvioSecundario));
+                msg.addRecipient(Message.RecipientType.TO, new InternetAddress(emailDestinatarioSecundario));
+                msg.setSubject("POLITICAS DO GOOGLE ANDROID MANAGEMENT API");
+                msg.setContent(msgBodySenc, "text/html");
+                msg.setText(msgBodySenc);
+                Transport.send(msg);
+                confirmaEnvio = true;
+
+            }catch(AddressException e) { System.out.println(e.toString());
+            }catch(MessagingException e) { System.out.println(e.toString());}
         }
+        
     }
-    
+
     public static class TransfJson {
 
         private String namePolicy;
-        private String textPolicy;
-        public TransfJson(String namePolicy, String textPolicy){
+        public TransfJson(String namePolicy) {
            
-            this.namePolicy = namePolicy;
-            this.textPolicy = textPolicy;    
+            this.namePolicy = namePolicy;   
         }
-        
         public TransfJson(){}
-        public String getNamePolicy(){return namePolicy;}
-        public void setNamePolicy(String namePolicy){this.namePolicy = namePolicy;}
-        public String getTextPolicy(){return textPolicy;}
-        public void setTextPolicy(String textPolicy){this.textPolicy = textPolicy;}           
+        public String getNamePolicy() {return namePolicy;}
+        public void setNamePolicy(String namePolicy) {this.namePolicy = namePolicy;}      
     }
     
     public static void main(String[] args) throws IOException {
@@ -82,38 +124,30 @@ public class log {
         List<Element> tr = tbody.getElementsByTag("tr");
         List<TransfJson> tagList = new ArrayList<>();
         
-        for(Element trs: tr){
+        for(Element trs: tr) {
+            
             List<Element> attributes = trs.getElementsByTag("td");
-            TransfJson transfJson = new TransfJson(
-                
-                attributes.get(0).text(),
-                attributes.get(1).text()
-            );
+            TransfJson transfJson = new TransfJson(attributes.get(0).text());
             tagList.add(transfJson);
         }
-        for(TransfJson transfJson: tagList){
-
-            converterToJson(transfJson);            
-        }
-        //envioEmail novoEmail = new envioEmail();
-        verificador verificando = new verificador();
-    }
-
-    public static void converterToJson(TransfJson transfJson){
         
-        List<String> lista = new ArrayList<String>();
         ObjectMapper mapper = new ObjectMapper();
+        List<String> lista = new ArrayList<String>();
+        
         try{
-            String json = mapper.writeValueAsString(transfJson);
-            if(json.contains("deprecated")){
+            
+            for(TransfJson transfJson: tagList) {
                 
-               lista.add(json);
-               //System.out.println("Objeto em JSON: "+json);
-               //System.out.println("-----------------------------------");
-            }
-        }catch(JsonProcessingException e){
+                String Json = mapper.writeValueAsString(transfJson);
+                if(Json.contains("deprecated")) {
+                    
+                    lista.add(Json+"\n");}
+            } 
+        }catch(JsonProcessingException e) {
             
             e.printStackTrace();
-        } 
+        }
+        envioDeEmail(lista); 
     }
+
 }
