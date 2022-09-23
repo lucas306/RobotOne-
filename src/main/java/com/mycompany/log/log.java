@@ -27,8 +27,8 @@ public class log {
         
     public static void envioDeEmail(List lista) {
     
-        String emailEnvioPrimario = "le34661@gmail.com";
-        String senhaEnvioPrimario = "tuygvkhdvfbjzzwd";
+        String emailEnvioPrimario = "";
+        String senhaEnvioPrimario = "";
         String emailDestinatarioPrimario = "lucasjarandia.1428@aluno.saojudas.br";
 
         String emailEnvioSecundario = "le34661@gmail.com";
